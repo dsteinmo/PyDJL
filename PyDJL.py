@@ -35,7 +35,7 @@ class DJL(object):
 
         # Log configuration.
         if log_config is None:
-            logging.config.dictConfig({
+            logging.config.dictConfig(
                 {
                     'version': 1,
                     'disable_existing_loggers': False,
@@ -65,7 +65,7 @@ class DJL(object):
                     },
                 }
 
-            })
+            )
         else:
             logging.config.dictConfig(log_config)
 
