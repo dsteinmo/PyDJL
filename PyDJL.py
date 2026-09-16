@@ -7,8 +7,7 @@ from scipy import sparse
 import scipy.sparse.linalg
 import scipy.fftpack
 import time
-import logging
-from logging import Logger
+import logging.config
     
 class DJL(object):
     """
