@@ -41,11 +41,11 @@ class DJL(object):
                     'disable_existing_loggers': False,
                     'formatters': {
                         'verbose': {
-                            'format': '{levelname} {asctime} {module} {message}',
+                            'format': '[PyDJL] - {levelname}, {asctime}, {module}: {message}',
                             'style': '{',
                         },
                         'simple': {
-                            'format': '{levelname} {message}',
+                            'format': '[PyDJL] - {levelname}: {message}',
                             'style': '{',
                         },
                     },
