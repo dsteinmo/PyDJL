@@ -23,6 +23,7 @@ class DJL(object):
                  relax=0.5, epsilon=1e-4,
                  initial_guess=None,
                  verbose = 0,
+                 log_config=None
                  ):
         """
         Constructor
@@ -32,7 +33,44 @@ class DJL(object):
             - Either call the initial_guess to prepare the initial eta and c or use the provided initial guess.
             - Call refine_solution to iteratively find the solution to DJL equation.
         """
-        self.logger = Logger("DJL")
+
+        # Log configuration.
+        if log_config is None:
+            logging.config.dictConfig({
+                {
+                    'version': 1,
+                    'disable_existing_loggers': False,
+                    'formatters': {
+                        'verbose': {
+                            'format': '{levelname} {asctime} {module} {message}',
+                            'style': '{',
+                        },
+                        'simple': {
+                            'format': '{levelname} {message}',
+                            'style': '{',
+                        },
+                    },
+                    'handlers': {
+                        'console': {
+                            'class': 'logging.StreamHandler',
+                            'formatter': 'verbose' if verbose > 1 else 'simple',
+                            'level': 'DEBUG' if verbose > 1 else 'INFO',
+                        },
+                    },
+                    'loggers': {
+                        'PyDJL': {
+                            'handlers': ['console'],
+                            'level': 'DEBUG' if verbose > 1 else 'INFO',
+                            'propagate': False,
+                        },
+                    },
+                }
+
+            })
+        else:
+            logging.config.dictConfig(log_config)
+
+        self.logger = logging.getLogger('PyDJL')
 
         self.A = A 	#APE for wave (m^4/s^2)
         self.L = L 	#domain width (m)
