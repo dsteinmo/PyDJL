@@ -19,10 +19,11 @@ class DJL(object):
         
     def __init__(self, A, L, H, NX, NZ, rho, rhoz,
                  intrho=None, rho0 = 1, Ubg=None, Ubgz = None, Ubgzz=None,
-                 relax=0.5, epsilon=1e-4,
+                 relax=0.5, epsilon=1e-4, max_iteration=None,
                  initial_guess=None,
                  verbose = 0,
-                 log_config=None
+                 log_config=None,
+                 solve_immediately=True
                  ):
         """
         Constructor
@@ -87,7 +88,7 @@ class DJL(object):
 
         #  Default min and max number of iterations for the iterative procedure.
         self.min_iteration = 10
-        self.max_iteration = 2000
+        self.max_iteration = max_iteration if max_iteration is not None else 2000
 
         # Default number of Legendre points for Gauss quadrature - use for numerical integration.
         self.NL = 20
@@ -142,8 +143,9 @@ class DJL(object):
             # Use provided solution as initial guess (e.i use provided eta)
             self.import_initial_guess(initial_guess)
 
-        # Solve the wave
-        self.refine_solution()
+        if solve_immediately:
+            # Solve the wave
+            self.refine_solution()
 
     
     def N2(self, z):
