@@ -577,6 +577,8 @@ class Diagnostic(object):
         Constructor
         """
         self.djl = djl
+        self.wavelength = None
+        self.residual = None
         
         # Compute_diagnostic to assign rhe self variables.
         self.compute_diagnostics(self.djl)
@@ -621,7 +623,7 @@ class Diagnostic(object):
     #########################################
     #######        wavelength :     #########
     #########################################
-    def wavelength(self, eta, NX):
+    def compute_wavelength(self, eta, NX):
         """
         L_w following via Eq 3.6 in
         Aghsaee, P., Boegman, L., and K. G. Lamb. 2010. "Breaking of shoaling 
@@ -633,13 +635,13 @@ class Diagnostic(object):
         w  = self.djl.quadweights(NX) *(self.djl.L/numpy.pi)
         Lw = numpy.sum(w*etaL) / eta[iz,ix]
         # We take wavelength as twice Lw
-        self.wavelength = 2*Lw
-        return self.wavelength
+        wavelength = 2*Lw
+        return wavelength
     
     #########################################
     #######        residual :       #########
     #########################################
-    def residual(self, z, eta, c, NX, NZ ):
+    def compute_residual(self, z, eta, c, NX, NZ ):
         """
         DJL residual using Eq 2.32 in (Stastna, 2001)
         """
@@ -696,13 +698,16 @@ class Diagnostic(object):
         # Vorticity, density and Richardson number
         self.vorticity =self.uz - self.wx
         self.density = djl.rho(djl.ZC-djl.eta)
-        self.ri = djl.N2(djl.ZC-djl.eta)/(self.uz*self.uz)
+        if self.uz is not None:
+            self.ri = djl.N2(djl.ZC-djl.eta)/(self.uz*self.uz)
+        else:
+            self.ri = None
         
         #Wavelength (currently works only on interior grid)
-        self.wavelength = self.wavelength(djl.eta, djl.NX)
+        self.wavelength = self.compute_wavelength(djl.eta, djl.NX)
 
         # Residual in DJL equation
-        self.residual, LHS, RHS = self.residual(djl.ZC, djl.eta, djl.c, djl.NX, djl.NZ )
+        self.residual, LHS, RHS = self.compute_residual(djl.ZC, djl.eta, djl.c, djl.NX, djl.NZ )
 
         res = numpy.max(numpy.abs(self.residual))
         lhs = numpy.max(numpy.abs(LHS))
